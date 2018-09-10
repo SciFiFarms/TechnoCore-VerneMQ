@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/SciFiFarms/dogfish.git
 	branch = master
-	commit = 23a6f8409a0df886050995218c4a19b286d38f7b
-	parent = 7e2d5b7d5ddc794a6117aa70a0243be2c9473bce
+	commit = cafa84e7108bb7c9b6ac6cce218cbe71f9c2fd88
+	parent = ac3f1bce0d4548c0fb4e8d75295efe10cd19cf1f
 	cmdver = 0.3.1
