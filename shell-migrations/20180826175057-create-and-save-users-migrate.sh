@@ -7,5 +7,5 @@ do
 done
 sleep 3
 
-create_user "home-assistant&ha" ha
-create_user "node-red&nr" nr
+create_user home-assistant "home_assistant&ha"
+create_user node-red "node_red&nr"
