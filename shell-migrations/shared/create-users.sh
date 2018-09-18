@@ -44,7 +44,7 @@ function create_user()
     done;
     mqtt_password=$(extract_from_json random_bytes "$response")
 
-    add_user_to_vernemq $1 $mqtt_password
-    create_secret $2/mqtt_username $1
-    create_secret $2/mqtt_password $mqtt_password
+    add_user_to_vernemq "$1" "$mqtt_password"
+    create_secret "$2/mqtt_username" "$1"
+    create_secret "$2/mqtt_password" "$mqtt_password"
 }
