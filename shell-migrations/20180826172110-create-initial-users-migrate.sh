@@ -12,7 +12,7 @@ do
     echo "Couldn't reach MQTT. Sleeping."
     sleep 1
 done
-sleep 10
+sleep 5
 #echo "Finished wait for middle migration."
 
 add_user_to_vernemq $(cat /run/secrets/portainer_mqtt_username) $(cat /run/secrets/portainer_mqtt_password)
