@@ -17,3 +17,10 @@ RUN ln -s /etc/vernemq/migrations.log /var/lib/dogfish/migrations.log
 COPY vernemq.conf /etc/vernemq.conf
 CMD dogfish migrate & start_vernemq
 WORKDIR /etc/vernemq
+
+# Set up the entrypoint
+COPY entrypoint.sh /usr/bin/entrypoint.sh
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+
+COPY mqtt-scripts/ /usr/share/mqtt-scripts
+RUN chmod +x /usr/share/mqtt-scripts/*
