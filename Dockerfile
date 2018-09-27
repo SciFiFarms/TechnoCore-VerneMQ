@@ -62,7 +62,7 @@ RUN mkdir /var/lib/dogfish
 RUN ln -s /etc/vernemq/migrations.log /var/lib/dogfish/migrations.log 
 
 COPY vernemq.conf /etc/vernemq.conf
-CMD dogfish migrate & start_vernemq
+CMD ["start_vernemq"]
 WORKDIR /etc/vernemq
 
 # Set up the entrypoint
