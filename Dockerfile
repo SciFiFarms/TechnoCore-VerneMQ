@@ -46,6 +46,7 @@ USER vernemq
 
 CMD ["start_vernemq"]
 FROM erlio/docker-vernemq 
+FROM erlio/docker-vernemq:1.6.1
 RUN apt-get update && apt-get install -y expect mosquitto-clients 
 
 # Add dogfish
@@ -62,12 +63,14 @@ RUN mkdir /var/lib/dogfish
 RUN ln -s /etc/vernemq/migrations.log /var/lib/dogfish/migrations.log 
 
 COPY vernemq.conf /etc/vernemq.conf
-CMD ["start_vernemq"]
 WORKDIR /etc/vernemq
 
 # Set up the entrypoint
+COPY go-init /bin/go-init
 COPY entrypoint.sh /usr/bin/entrypoint.sh
-ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+COPY exitpoint.sh /usr/bin/exitpoint.sh
+ENTRYPOINT ["go-init"]
+CMD ["-pre", "entrypoint.sh", "-main", "start_vernemq", "-post", "exitpoint.sh"]
 
 COPY mqtt-scripts/ /usr/share/mqtt-scripts
 RUN chmod +x /usr/share/mqtt-scripts/*
