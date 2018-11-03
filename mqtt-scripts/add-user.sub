@@ -8,6 +8,17 @@ function subscribe()
 {
     sub_topic="$1"
     shift
+    # Wait until MQTT network is up before trying to connect.
+    until response=$(mosquitto_pub -i mqtt_sub -h mqtt -p 8883 -q 2 \
+        -t testing/connection \
+        -m "Test body" \
+        -u $(cat /run/secrets/mqtt_username) \
+        -P "$(cat /run/secrets/mqtt_password)" \
+       --cafile /run/secrets/ca  2>&1)
+    do
+        echo "Couldn't connect to MQTT. Sleeping."
+        sleep 5
+    done
 
     while true
     do
@@ -26,7 +37,7 @@ function subscribe()
             -P $(cat /run/secrets/mqtt_password) \
             -v \
             --cafile /run/secrets/ca )
-        echo "Done reading. Starting sleep."
+        echo "MQTT listener finished sub processing. Sleeping and restarting subscription."
         sleep 10
     done
     echo "If you see this, something has gone wrong."
