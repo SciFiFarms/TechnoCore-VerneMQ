@@ -17,7 +17,7 @@ RUN ln -s /etc/vernemq/migrations.log /var/lib/dogfish/migrations.log
 COPY vernemq.conf /etc/vernemq.conf
 WORKDIR /etc/vernemq
 
-# Set up the entrypoint
+# Set up the CMD as well as the pre and post hooks.
 COPY go-init /bin/go-init
 COPY entrypoint.sh /usr/bin/entrypoint.sh
 COPY exitpoint.sh /usr/bin/exitpoint.sh
