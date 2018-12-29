@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ln -s /etc/vernemq.conf /etc/vernemq/vernemq.conf.local
+ln -s /vernemq/vernemq.conf /vernemq/etc/vernemq.conf.local
