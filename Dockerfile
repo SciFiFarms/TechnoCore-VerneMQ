@@ -37,6 +37,35 @@ WORKDIR /vernemq
 COPY --from=build-env /vernemq-build/release /vernemq
 ADD files/vm.args /vernemq/etc/vm.args
 
+##### Begin additions for TechnoCore
+RUN apt-get update && apt-get install -y expect mosquitto-clients 
+
+# Add dogfish
+COPY dogfish/ /usr/share/dogfish
+RUN ln -s /usr/share/dogfish/dogfish /usr/bin/dogfish
+COPY shell-migrations/ /usr/share/dogfish/shell-migrations
+COPY dogfish/shell-migrations-shared/ /usr/share/dogfish/shell-migrations-shared
+
+# Create log file.
+RUN touch /vernemq/etc/migrations.log
+
+# Symlink log file.
+RUN mkdir /var/lib/dogfish
+RUN ln -s /vernemq/etc/migrations.log /var/lib/dogfish/migrations.log 
+
+COPY vernemq.conf /vernemq/vernemq.conf
+WORKDIR /vernemq/etc
+
+# Set up the CMD as well as the pre and post hooks.
+COPY go-init /bin/go-init
+COPY entrypoint.sh /usr/bin/entrypoint.sh
+COPY exitpoint.sh /usr/bin/exitpoint.sh
+
+COPY mqtt-scripts/ /usr/share/mqtt-scripts
+RUN chmod +x /usr/share/mqtt-scripts/*
+
+##### End additions for TechnoCore
+
 RUN addgroup vernemq && \
     adduser --system --ingroup vernemq --home /vernemq --disabled-password vernemq && \
     chown -R vernemq:vernemq /vernemq && \
@@ -60,4 +89,7 @@ EXPOSE 1883 8883 8080 44053 4369 8888 \
 VOLUME ["/vernemq/log", "/vernemq/data", "/vernemq/etc"]
 
 USER vernemq
-CMD ["start_vernemq"]
+##### Begin additions for TechnoCore
+ENTRYPOINT ["go-init"]
+CMD ["-pre", "entrypoint.sh", "-main", "start_vernemq", "-post", "exitpoint.sh"]
+##### End additions for TechnoCore
