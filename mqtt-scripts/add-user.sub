@@ -16,7 +16,7 @@ function subscribe()
         -P "$(cat /run/secrets/mqtt_password)" \
        --cafile /run/secrets/ca  2>&1)
     do
-        echo "Couldn't connect to MQTT. Sleeping."
+        echo "Couldn't connect to MQTT. Response: $response"
         sleep 5
     done
 
