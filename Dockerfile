@@ -1,3 +1,25 @@
+FROM erlang:20.3 AS build-env
+
+WORKDIR /vernemq-build
+
+ARG VERNEMQ_GIT_REF=1.7.0
+ARG TARGET=rel
+ARG VERNEMQ_REPO=https://github.com/vernemq/vernemq.git
+
+# Defaults
+ENV DOCKER_VERNEMQ_KUBERNETES_APP_LABEL vernemq
+ENV DOCKER_VERNEMQ_LOG__CONSOLE console
+
+RUN \
+    apt-get update \
+    && apt-get -y install build-essential git libssl-dev  \
+    && git clone -b $VERNEMQ_GIT_REF --single-branch --depth 1 $VERNEMQ_REPO .
+
+ADD bin/build.sh build.sh
+
+RUN ./build.sh $TARGET
+
+
 FROM debian:stretch-slim
 
 RUN apt-get update && \
