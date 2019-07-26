@@ -1,7 +1,10 @@
 #!/bin/env bash
 
-# Defaults to the service's directory name. 
-service_name=${PWD##*/}
+#TODO: Anything that gets sent to STDOUT from this file gets included in the 
+#      final compose file, which usually breaks it. 
+
+# compose.sh defaults $service_name to the service's directory name. It can be overridden here. 
+# service_name=
 
 # Leave blank to disable this service by default.
 set_service_flag $service_name

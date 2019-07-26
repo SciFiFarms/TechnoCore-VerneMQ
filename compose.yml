@@ -15,7 +15,19 @@ volumes:
   # Secrets format
   # ${service_name}_${mount_point}:
   #   name: ${stack_name:-technocore}_${service_name}_${mount_point}
-  #   external: true
+  # #   external: true
+  EXAMPLE_SERVICE_admin_username:
+    name: ${STACK_NAME:-technocore}_EXAMPLE_SERVICE_admin_username
+    external: true
+  EXAMPLE_SERVICE_admin_password:
+    name: ${STACK_NAME:-technocore}_EXAMPLE_SERVICE_admin_password
+    external: true
+  EXAMPLE_SERVICE_EXAMPLE_SERVICE-db_username:
+    name: ${STACK_NAME:-technocore}_EXAMPLE_SERVICE_EXAMPLE_SERVICE-db_username
+    external: true
+  EXAMPLE_SERVICE_EXAMPLE_SERVICE-db_password:
+    name: ${STACK_NAME:-technocore}_EXAMPLE_SERVICE_EXAMPLE_SERVICE-db_password
+    external: true
 
 services:
   ingress:
