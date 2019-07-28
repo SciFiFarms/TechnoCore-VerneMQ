@@ -30,9 +30,10 @@ volumes:
     external: true
 
 services:
-  ingress:
-    networks:
-      - EXAMPLE_SERVICE
+  ## Uncomment this if Traefik will be used for routing traffick to this service.
+  #ingress:
+  #  networks:
+  #    - EXAMPLE_SERVICE
 
   EXAMPLE_SERVICE:
     deploy:
