@@ -49,6 +49,7 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
+        - ${TRAEFIK_BASIC_AUTH}
       mode: global
       restart_policy:
         condition: any
