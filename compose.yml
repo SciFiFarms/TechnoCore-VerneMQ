@@ -64,7 +64,10 @@ services:
       # Sometimes you have to pass in ${DOMAIN} to enable the correct link paths to be generated.
       # Othertimes you can use http:// for the website. Weird trick.
     image: ${image_provider:-scififarms}/technocore-EXAMPLE_SERVICE:${TAG:-latest}
-    <<: *logging-defaults
+    logging:
+      driver: "${LOGGING_DRIVER}"
+      options:
+        tag: "{{.Name}}"
     networks:
       - EXAMPLE_SERVICE
       - EXAMPLE_SERVICE-private
@@ -86,7 +89,10 @@ services:
         condition: any
     #environment:
     image: ${image_provider:-scififarms}/technocore-EXAMPLE_SERVICE-db:${TAG:-latest}
-    <<: *logging-defaults
+    logging:
+      driver: "${LOGGING_DRIVER}"
+      options:
+        tag: "{{.Name}}"
     networks:
       - EXAMPLE_SERVICE-private
     secrets:
