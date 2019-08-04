@@ -37,19 +37,21 @@ services:
 
   EXAMPLE_SERVICE:
     deploy:
-      labels:
-        - traefik.frontend.rule=Host:EXAMPLE_SERVICE.${DOMAIN}
-        - traefik.enable=true
-        # You'll need to set applicaiton's port here.
-        - traefik.port=SET_ME_PLEASE
-        - traefik.tags=ingress 
-        - traefik.docker.network=${STACK_NAME:-technocore}_EXAMPLE_SERVICE
-        # Traefik service that listens to HTTP
-        - traefik.redirectorservice.frontend.entryPoints=http
-        - traefik.redirectorservice.frontend.redirect.entryPoint=https
-        # Traefik service that listens to HTTPS
-        - traefik.webservice.frontend.entryPoints=https
-        - ${TRAEFIK_BASIC_AUTH}
+      #labels:
+      #  # These env vars should infact be uppercase
+      #  - traefik.frontend.rule=$EXAMPLE_SERVICE_ROUTING_LABEL
+      #  - traefik.frontend.priority=$EXAMPLE_SERVICE_ROUTING_LABEL_PRIORITY
+      #  - traefik.port=SET_ME_PLEASE
+      #  - ${TRAEFIK_BASIC_AUTH}
+      #  - traefik.enable=true
+      #  # You'll need to set applicaiton's port here.
+      #  - traefik.tags=ingress 
+      #  - traefik.docker.network=${STACK_NAME:-technocore}_EXAMPLE_SERVICE
+      #  # Traefik service that listens to HTTP
+      #  - traefik.redirectorservice.frontend.entryPoints=http
+      #  - traefik.redirectorservice.frontend.redirect.entryPoint=https
+      #  # Traefik service that listens to HTTPS
+      #  - traefik.webservice.frontend.entryPoints=https
       mode: global
       restart_policy:
         condition: any
@@ -64,7 +66,7 @@ services:
           memory: 64M
     #environment:
       # Sometimes you have to pass in ${DOMAIN} to enable the correct link paths to be generated.
-      # Othertimes you can use http:// for the website. Weird trick.
+      # Othertimes you can use http:// or https:// for the website. Weird trick.
     image: ${image_provider:-scififarms}/technocore-EXAMPLE_SERVICE:${TAG:-latest}
     logging:
       driver: "${LOGGING_DRIVER}"
