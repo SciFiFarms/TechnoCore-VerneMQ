@@ -14,7 +14,7 @@ set_service_flag $service_name
 # Results in one of the following paths: 
 # https://some.domain/prefix/
 # https://prefix.some.domain/
-path_prefix ${service_name^^} $service_name
+# prefix=$service_name
 
 # This is how to optionally include additional .yml files. See the prometheus repo 
 # for a complete example.
