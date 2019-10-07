@@ -14,7 +14,7 @@ volumes:
 #secrets:
   # Secrets format
   # ${service_name}_${mount_point}:
-  #   name: ${stack_name:-technocore}_${service_name}_${mount_point}
+  #   name: ${STACK_NAME:-technocore}_${service_name}_${mount_point}
   # #   external: true
   EXAMPLE_SERVICE_admin_username:
     name: ${STACK_NAME:-technocore}_EXAMPLE_SERVICE_admin_username
@@ -37,7 +37,7 @@ services:
 
   EXAMPLE_SERVICE:
     deploy:
-      #labels:
+      labels:
       #  # These env vars should infact be uppercase
       #  - traefik.frontend.rule=$EXAMPLE_SERVICE_ROUTING_LABEL
       #  - traefik.frontend.priority=$EXAMPLE_SERVICE_ROUTING_LABEL_PRIORITY
@@ -52,6 +52,7 @@ services:
       #  - traefik.redirectorservice.frontend.redirect.entryPoint=https
       #  # Traefik service that listens to HTTPS
       #  - traefik.webservice.frontend.entryPoints=https
+        - com.ouroboros.enable=true
       mode: global
       restart_policy:
         condition: any
@@ -88,6 +89,8 @@ services:
 
   EXAMPLE_SERVICE_db:
     deploy:
+      labels:
+        - com.ouroboros.enable=true
       mode: global
       restart_policy:
         condition: any
