@@ -1,0 +1,116 @@
+version: "3.5"
+# You should be able to find & replace all instances of EXAMPLE_SERVICE with 
+# your actual_service_name. Then you just need address any places that 
+# typically need changes (designated by comments)
+
+networks:
+  EXAMPLE_SERVICE:
+  EXAMPLE_SERVICE-private:
+
+volumes:
+  EXAMPLE_SERVICE:
+  EXAMPLE_SERVICE-db:
+
+#secrets:
+  # Secrets format
+  # ${service_name}_${mount_point}:
+  #   name: ${STACK_NAME:-technocore}_${service_name}_${mount_point}
+  # #   external: true
+  EXAMPLE_SERVICE_admin_username:
+    name: ${STACK_NAME:-technocore}_EXAMPLE_SERVICE_admin_username
+    external: true
+  EXAMPLE_SERVICE_admin_password:
+    name: ${STACK_NAME:-technocore}_EXAMPLE_SERVICE_admin_password
+    external: true
+  EXAMPLE_SERVICE_EXAMPLE_SERVICE-db_username:
+    name: ${STACK_NAME:-technocore}_EXAMPLE_SERVICE_EXAMPLE_SERVICE-db_username
+    external: true
+  EXAMPLE_SERVICE_EXAMPLE_SERVICE-db_password:
+    name: ${STACK_NAME:-technocore}_EXAMPLE_SERVICE_EXAMPLE_SERVICE-db_password
+    external: true
+
+services:
+  ## Uncomment this if Traefik will be used for routing traffick to this service.
+  #ingress:
+  #  networks:
+  #    - EXAMPLE_SERVICE
+
+  EXAMPLE_SERVICE:
+    deploy:
+      labels:
+      #  # These env vars should infact be uppercase
+      #  - traefik.frontend.rule=$EXAMPLE_SERVICE_ROUTING_LABEL
+      #  - traefik.frontend.priority=$EXAMPLE_SERVICE_ROUTING_LABEL_PRIORITY
+      #  - traefik.port=SET_ME_PLEASE
+      #  - ${TRAEFIK_BASIC_AUTH}
+      #  - traefik.enable=true
+      #  # You'll need to set applicaiton's port here.
+      #  - traefik.tags=ingress 
+      #  - traefik.docker.network=${STACK_NAME:-technocore}_EXAMPLE_SERVICE
+      #  # Traefik service that listens to HTTP
+      #  - traefik.redirectorservice.frontend.entryPoints=http
+      #  - traefik.redirectorservice.frontend.redirect.entryPoint=https
+      #  # Traefik service that listens to HTTPS
+      #  - traefik.webservice.frontend.entryPoints=https
+        - com.ouroboros.enable=true
+      mode: global
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.role == manager
+      # Big services will need this modified or removed.
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+    #environment:
+      # Sometimes you have to pass in ${DOMAIN} to enable the correct link paths to be generated.
+      # Othertimes you can use http:// or https:// for the website. Weird trick.
+    image: ${image_provider:-scififarms}/technocore-EXAMPLE_SERVICE:${TAG:-latest}
+    logging:
+      driver: "${LOGGING_DRIVER}"
+      options:
+        tag: "{{.Name}}"
+    networks:
+      - EXAMPLE_SERVICE
+      - EXAMPLE_SERVICE-private
+    #secrets:
+    #  - source: EXAMPLE_SERVICE_EXAMPLE_SERVICE_db_username
+    #    target: EXAMPLE_SERVICE_db_username
+    #  - source: EXAMPLE_SERVICE_EXAMPLE_SERVICE_db_password
+    #    target: EXAMPLE_SERVICE_db_password
+    #  - source: EXAMPLE_SERVICE_domain
+    #    target: domain
+    volumes:
+      # Likely need to change this
+      - EXAMPLE_SERVICE:/var/lib/EXAMPLE_SERVICE
+
+  EXAMPLE_SERVICE_db:
+    deploy:
+      labels:
+        - com.ouroboros.enable=true
+      mode: global
+      restart_policy:
+        condition: any
+    #environment:
+    image: ${image_provider:-scififarms}/technocore-EXAMPLE_SERVICE-db:${TAG:-latest}
+    logging:
+      driver: "${LOGGING_DRIVER}"
+      options:
+        tag: "{{.Name}}"
+    networks:
+      - EXAMPLE_SERVICE-private
+    secrets:
+      - source: EXAMPLE_SERVICE_db_admin_username
+        target: admin_username
+      - source: EXAMPLE_SERVICE_db_admin_password
+        target: admin_password
+      - source: EXAMPLE_SERVICE_db_EXAMPLE_SERVICE_username
+        target: EXAMPLE_SERVICE_username
+      - source: EXAMPLE_SERVICE_db_EXAMPLE_SERVICE_password
+        target: EXAMPLE_SERVICE_password
+    volumes:
+      # Likely need to change this
+      - EXAMPLE_SERVICE-db:/var/lib/EXAMPLE_SERVICE
