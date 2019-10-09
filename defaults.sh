@@ -23,3 +23,4 @@ set_service_flag $service_name
 #    export SERVICE_CONFIG_prometheus_exporters=${TECHNOCORE_SERVICES}/prometheus/exporters.yml
 #fi
 
+#generate_mount dev shell-migrations /usr/share/dogfish/shell-migrations
