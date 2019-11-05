@@ -6,29 +6,19 @@ networks:
 volumes:
   mqtt:
 
-#secrets:
+secrets:
   # Secrets format
   # ${service_name}_${mount_point}:
   #   name: ${STACK_NAME:-technocore}_${service_name}_${mount_point}
   # #   external: true
-  #mqtt_admin_username:
-  #  name: ${STACK_NAME:-technocore}_mqtt_admin_username
-  #  external: true
-  mqtt_admin_password:
-    name: ${STACK_NAME:-technocore}_mqtt_admin_password
-    external: true
-  #mqtt_mqtt-db_username:
-  #  name: ${STACK_NAME:-technocore}_mqtt_mqtt-db_username
-  #  external: true
-  mqtt_mqtt-db_password:
-    name: ${STACK_NAME:-technocore}_mqtt_mqtt-db_password
+  vernemq_admin_password:
+    name: ${STACK_NAME:-technocore}_vernemq_admin_password
     external: true
 
 services:
-  ## Uncomment this if Traefik will be used for routing traffick to this service.
-  #ingress:
-  #  networks:
-  #    - mqtt
+  ingress:
+    networks:
+      - mqtt
 
   mqtt:
     deploy:
@@ -55,57 +45,32 @@ services:
         constraints:
           - node.role == manager
       # Big services will need this modified or removed.
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
-    #environment:
+      #resources:
+      #  limits:
+      #    memory: 128M
+      #  reservations:
+      #    memory: 64M
+    environment:
       # Sometimes you have to pass in ${DOMAIN} to enable the correct link paths to be generated.
       # Othertimes you can use http:// or https:// for the website. Weird trick.
-    image: ${image_provider:-scififarms}/technocore-mqtt:${TAG:-latest}
-    logging:
-      driver: "${LOGGING_DRIVER}"
-      options:
-        tag: "{{.Name}}"
-    networks:
-      - mqtt
-      - mqtt-private
-    #secrets:
-    #  - source: mqtt_mqtt_db_username
-    #    target: mqtt_db_username
-    #  - source: mqtt_mqtt_db_password
-    #    target: mqtt_db_password
-    #  - source: mqtt_domain
-    #    target: domain
-    volumes:
-      # Likely need to change this
-      - mqtt:/var/lib/mqtt
+      - ADMIN_USER=${ADMIN_USER}
 
-  mqtt_db:
-    deploy:
-      labels:
-        - com.ouroboros.enable=true
-      mode: global
-      restart_policy:
-        condition: any
-    #environment:
-    image: ${image_provider:-scififarms}/technocore-mqtt-db:${TAG:-latest}
+    image: ${image_provider:-scififarms}/technocore-vernemq:${TAG:-latest}
     logging:
       driver: "${LOGGING_DRIVER}"
       options:
         tag: "{{.Name}}"
     networks:
-      - mqtt-private
+      mqtt:
+        aliases:
+          - mqtt.local
+    hostname: mqtt
     secrets:
-      - source: mqtt_db_admin_username
-        target: admin_username
-      - source: mqtt_db_admin_password
+      - source: vernemq_admin_password
         target: admin_password
       - source: mqtt_db_mqtt_username
         target: mqtt_username
       - source: mqtt_db_mqtt_password
         target: mqtt_password
     volumes:
-      # Likely need to change this
-      - mqtt-db:/var/lib/mqtt
+      - mqtt:/vernemq/etc 
