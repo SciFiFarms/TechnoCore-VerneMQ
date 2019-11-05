@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source /usr/share/dogfish/shell-migrations/shared/create-users.sh
+
 # $1: Topic to subscribe to
 # $2+: Command to run upon message reception.
 #   Vars $topic $message will be avalible to the command.
@@ -9,12 +11,12 @@ function subscribe()
     sub_topic="$1"
     shift
     # Wait until MQTT network is up before trying to connect.
-    until response=$(mosquitto_pub -i mqtt_sub -h mqtt -p 8883 -q 2 \
+    until response=$(mosquitto_pub -i mqtt_sub -h mqtt -p 1883 -q 2 \
         -t testing/connection \
         -m "Test body" \
-        -u $(cat /run/secrets/mqtt_username) \
-        -P "$(cat /run/secrets/mqtt_password)" \
-       --cafile /run/secrets/ca  2>&1)
+        -u ${ADMIN_USER} \
+        -P "$(cat /run/secrets/admin_password)" \
+        2>&1)
     do
         echo "Couldn't connect to MQTT. Response: $response"
         sleep 5
@@ -30,63 +32,17 @@ function subscribe()
             local message=$(echo "$RAW_DATA" | cut -d" " -f2- )
             "$@"
         # TODO: client-id (-i) should be set per container by var rather than hardcode here. 
-        done < <( mosquitto_sub -i "mqtt_sub" -h "mqtt" -p 8883 -q 2 \
+        done < <( mosquitto_sub -i "mqtt_sub" -h "mqtt" -p 1883 -q 2 \
             -c \
             -t "$sub_topic" \
-            -u $(cat /run/secrets/mqtt_username) \
-            -P $(cat /run/secrets/mqtt_password) \
-            -v \
-            --cafile /run/secrets/ca )
+            -u "${ADMIN_USER}" \
+            -P "$(cat /run/secrets/admin_password)" \
+            -v )
         echo "MQTT listener finished sub processing. Sleeping and restarting subscription."
         sleep 10
     done
     echo "If you see this, something has gone wrong."
 }
-
-# TODO: This should be moved to a shared location. 
-# $topic: MQTT Topic sent  
-# $message: The message sent
-# These vars should be set by the subscribe function. 
-function create_secret()
-{
-    cmd=${topic/portainer/docker}
-    cmd=$(echo "$cmd" | tr "/" " " ) 
-    echo "$cmd"
-
-    mount_point=$(echo "$cmd" | rev | cut -d" " -f1 | rev)
-    full_service_name=$(echo "$cmd" | rev | cut -d" " -f2 | rev)
-    # Currently some swarm service names have been abrivated 
-    # (ha=home-assistant, nr=node-red). I'm moving towards the full names 
-    # instead, but until that happens, I need to support some way to provide
-    # two different service names. Once that is complete, this can be simplified
-    # to a single service name. 
-    service_name=$(echo "$full_service_name" | cut -d"&" -f1 )
-    swarm_service_name=$(echo "$full_service_name" | cut -d"&" -f2 )
-    secret_name="${stackname}_${service_name}_${mount_point}"
-
-    # TODO: Instead of passing in the service, it would be better to look up all 
-    # the services that use the given secret_name.
-    # Can use docker secret rm ${secret_name} to get the list of services that 
-    # use ${secret_name}
-    # This may be a better version: https://gist.github.com/jamiejackson/a1818acedaeb9c3cd70bafac86a0100b
-    #service_name=$(echo "$cmd" | rev | cut -d" " -f3 | rev)
-    echo "Creating/updating secret: $secret_name for service $service_name"
-
-    #echo "mount_point: $mount_point"
-    #echo "Secret_name: $secret_name"
-    #echo "Service_name: $service_name"
-    #echo "Swarm_Service_name: $swarm_service_name"
-    #echo "full_service_name: $full_service_name"
-
-    echo -e "$message" | docker secret create ${secret_name}.temp -
-    docker service update --detach=false --secret-rm ${secret_name} --secret-add source=${secret_name}.temp,target=${mount_point} ${stackname}_${swarm_service_name}
-    docker secret rm ${secret_name}
-    echo -e "$message" | docker secret create ${secret_name} - 
-    docker service update --detach=false --secret-rm ${secret_name}.temp --secret-add source=${secret_name},target=${mount_point} ${stackname}_${swarm_service_name} 
-    docker secret rm ${secret_name}.temp
-}
-
-source /usr/share/dogfish/shell-migrations/shared/create-users.sh
 
 # $topic: MQTT Topic sent  
 # $message: The message sent
