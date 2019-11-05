@@ -24,6 +24,6 @@ expect eof
 EOF
     echo "Done with expect"
     # TODO: Add user permissions to user creation?
-    #echo "user $1\rtopic \r" >> /vernemq/etc/vmq.acl
+    echo "user $1\rtopic \r" >> /vernemq/etc/vmq.acl
 
 }

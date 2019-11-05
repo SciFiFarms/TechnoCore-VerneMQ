@@ -1,9 +1,10 @@
 #!/bin/bash
 
-#echo "Running middle migration."
+add_user_to_vernemq ${ADMIN_USER} $(cat /run/secrets/admin_password)
 
-add_user_to_vernemq $(cat /run/secrets/portainer_mqtt_username) $(cat /run/secrets/portainer_mqtt_password)
-add_user_to_vernemq $(cat /run/secrets/mqtt_username) $(cat /run/secrets/mqtt_password)
+for user in /run/secrets/users/*; do
+    add_user_to_vernemq "$(basename $user)" "$(cat $user)"
+done
 
 # Make sure the new users are usable for later migrations.
 force_reboot=1
