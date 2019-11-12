@@ -14,6 +14,12 @@ secrets:
   vernemq_admin_password:
     name: ${STACK_NAME:-technocore}_vernemq_admin_password
     external: true
+  create_secrets_mqtt_password:
+    name: ${STACK_NAME:-technocore}_create_secrets_mqtt_password
+    external: true
+  mqtt_create_secrets_password:
+    name: ${STACK_NAME:-technocore}_mqtt_create_secrets_password
+    external: true
 
 services:
   ingress:
@@ -68,9 +74,36 @@ services:
     secrets:
       - source: vernemq_admin_password
         target: admin_password
-      - source: mqtt_db_mqtt_username
-        target: mqtt_username
-      - source: mqtt_db_mqtt_password
-        target: mqtt_password
+      - source: mqtt_create_secrets_password
+        target: users/create_secrets
     volumes:
       - mqtt:/vernemq/etc 
+
+  create_secrets:
+    command: /usr/local/bin/sidecars/create-secret.sub
+    deploy:
+      labels:
+        - com.ouroboros.enable=true
+      mode: global
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+    environment:
+      - STACK_NAME=$STACK_NAME
+      - MQTT_USERNAME=create_secrets
+    image: ${image_provider:-scififarms}/technocore:${TAG:-latest}
+    logging:
+      driver: "${LOGGING_DRIVER}"
+      options:
+        tag: "{{.Name}}"
+    networks:
+      - mqtt
+    secrets:
+      - source: create_secrets_mqtt_password
+        target: mqtt_password
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
