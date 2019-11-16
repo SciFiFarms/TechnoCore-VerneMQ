@@ -44,6 +44,18 @@ services:
       #  # Traefik service that listens to HTTPS
       #  - traefik.webservice.frontend.entryPoints=https
         - com.ouroboros.enable=true
+        # For Traefik 2.0
+        #- "traefik.tcp.routers.mqtt.rule=HostSNI(`*`)"
+        ### This will only work if we change Host => HostSNI and if the connection is TLS.
+        ##- "traefik.tcp.routers.mqtt.rule=$VERNEMQ_ROUTING_LABEL"
+        ##- "traefik.tcp.routers.mqtt.priority=$VERNEMQ_ROUTING_LABEL_PRIORITY"
+        #- "traefik.tcp.routers.mqtt.entrypoints=mqtt"
+        #- "traefik.tcp.routers.mqtt.service=mqtt"
+        ##- "traefik.http.routers.api.tls"
+        #- traefik.tcp.services.mqtt.loadbalancer.server.port=1883
+        #- traefik.enable=true
+        ##- traefik.tags=ingress
+        ##- traefik.docker.network=${STACK_NAME:-technocore}_ingress
       mode: global
       restart_policy:
         condition: any
