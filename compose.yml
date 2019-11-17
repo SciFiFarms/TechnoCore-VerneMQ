@@ -83,6 +83,8 @@ services:
         aliases:
           - mqtt.local
     hostname: mqtt
+    ports:
+      - 1883:1883
     secrets:
       - source: vernemq_admin_password
         target: admin_password
