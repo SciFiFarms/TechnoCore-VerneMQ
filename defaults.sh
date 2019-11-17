@@ -8,6 +8,7 @@
 
 # Leave blank to disable this service by default.
 set_service_flag $service_name
+prefix=mqtt
 #set_service_flag $service_name yes
 
 # Sets the application prefix depending on what $INGRESS_TYPE is set to. 
