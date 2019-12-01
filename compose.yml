@@ -72,6 +72,7 @@ services:
       # Sometimes you have to pass in ${DOMAIN} to enable the correct link paths to be generated.
       # Othertimes you can use http:// or https:// for the website. Weird trick.
       - ADMIN_USER=${ADMIN_USER}
+      - DOCKER_VERNEMQ_ACCEPT_EULA=yes
 
     image: ${image_provider:-scififarms}/technocore-vernemq:${TAG:-latest}
     logging:
