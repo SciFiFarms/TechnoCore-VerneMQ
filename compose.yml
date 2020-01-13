@@ -29,20 +29,18 @@ services:
   mqtt:
     deploy:
       labels:
-      #  # These env vars should infact be uppercase
-      #  - traefik.frontend.rule=$MQTT_ROUTING_LABEL
-      #  - traefik.frontend.priority=$MQTT_ROUTING_LABEL_PRIORITY
-      #  - traefik.port=SET_ME_PLEASE
-      #  - ${TRAEFIK_BASIC_AUTH}
-      #  - traefik.enable=true
-      #  # You'll need to set applicaiton's port here.
-      #  - traefik.tags=ingress 
-      #  - traefik.docker.network=${STACK_NAME:-technocore}_mqtt
-      #  # Traefik service that listens to HTTP
-      #  - traefik.redirectorservice.frontend.entryPoints=http
-      #  - traefik.redirectorservice.frontend.redirect.entryPoint=https
-      #  # Traefik service that listens to HTTPS
-      #  - traefik.webservice.frontend.entryPoints=https
+        #- traefik.frontend.rule=$MQTT_ROUTING_LABEL
+        #- traefik.frontend.priority=$MQTT_ROUTING_LABEL_PRIORITY
+        #- traefik.port=1883
+        #- traefik.enable=true
+        ## You'll need to set applicaiton's port here.
+        #- traefik.tags=ingress 
+        #- traefik.docker.network=${STACK_NAME:-technocore}_mqtt
+        ## Traefik service that listens to HTTP
+        ##- traefik.redirectorservice.frontend.entryPoints=http
+        ##- traefik.redirectorservice.frontend.redirect.entryPoint=https
+        ## Traefik service that listens to HTTPS
+        #- traefik.webservice.frontend.entryPoints=mqtt
         - com.ouroboros.enable=true
         # For Traefik 2.0
         #- "traefik.tcp.routers.mqtt.rule=HostSNI(`*`)"
@@ -82,8 +80,8 @@ services:
     networks:
       mqtt:
         aliases:
-          - mqtt.local
-    hostname: mqtt
+          # Might need to be mqtt.local. It's how prometheus reaching vernemq. 
+          #- mqtt.local
     ports:
       - 1883:1883
     secrets:
