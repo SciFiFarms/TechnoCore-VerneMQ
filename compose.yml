@@ -79,7 +79,7 @@ services:
         tag: "{{.Name}}"
     networks:
       mqtt:
-        aliases:
+        #aliases:
           # Might need to be mqtt.local. It's how prometheus reaching vernemq. 
           #- mqtt.local
     ports:
