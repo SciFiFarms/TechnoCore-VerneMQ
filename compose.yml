@@ -5,6 +5,7 @@ networks:
 
 volumes:
   mqtt:
+  mqtt_data:
 
 secrets:
   # Secrets format
@@ -91,6 +92,7 @@ services:
         target: users/create_secrets
     volumes:
       - mqtt:/vernemq/etc 
+      - mqtt_data:/vernemq/data
 
   create_secrets:
     command: /usr/local/bin/sidecars/create-secret.sub
