@@ -33,6 +33,7 @@ RUN touch /vernemq/etc/migrations.log
 # Symlink log file.
 RUN mkdir /var/lib/dogfish
 RUN ln -s /vernemq/etc/migrations.log /var/lib/dogfish/migrations.log 
+RUN chown -R vernemq:vernemq /var/lib/dogfish*
 
 COPY vernemq.conf /vernemq/vernemq.conf
 #WORKDIR /vernemq/etc

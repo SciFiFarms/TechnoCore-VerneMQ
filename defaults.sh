@@ -25,3 +25,5 @@ prefix=mqtt
 #fi
 
 generate_mount dev shell-migrations /usr/share/dogfish/shell-migrations
+
+set_optional_service prometheus

@@ -1,0 +1,12 @@
+version: "3.5"
+networks:
+  mqtt-prometheus:
+
+services:
+  prometheus:
+    networks:
+      - mqtt-prometheus
+
+  mqtt:
+    networks:
+      - mqtt-prometheus
