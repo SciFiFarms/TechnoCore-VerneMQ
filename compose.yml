@@ -35,7 +35,7 @@ services:
         #- traefik.port=1883
         #- traefik.enable=true
         ## You'll need to set applicaiton's port here.
-        #- traefik.tags=ingress 
+        #- traefik.tags=ingress
         #- traefik.docker.network=${STACK_NAME:-technocore}_mqtt
         ## Traefik service that listens to HTTP
         ##- traefik.redirectorservice.frontend.entryPoints=http
@@ -81,17 +81,18 @@ services:
     networks:
       mqtt:
         #aliases:
-          # Might need to be mqtt.local. It's how prometheus reaching vernemq. 
+          # Might need to be mqtt.local. It's how prometheus reaching vernemq.
           #- mqtt.local
     ports:
       - 1883:1883
+      #- 8080:8080
     secrets:
       - source: vernemq_admin_password
         target: admin_password
       - source: mqtt_create_secrets_password
         target: users/create_secrets
     volumes:
-      - mqtt:/vernemq/etc 
+      - mqtt:/vernemq/etc
       - mqtt_data:/vernemq/data
 
   create_secrets:
